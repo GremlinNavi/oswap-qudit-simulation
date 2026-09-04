@@ -1,0 +1,23 @@
+# Local/editor state
+.vscode/
+.idea/
+*.tmp
+*.log
+
+# Build/test output
+out/
+build/
+dist/
+coverage/
+
+# Local credentials and environment files
+.env
+.env.*
+*.key
+*.pem
+*.pfx
+*.p12
+secrets/
+
+# PowerShell/module packaging output
+*.nupkg
