@@ -1,0 +1,339 @@
+OSWAP Mathematical Expression Demonstration
+=============================================
+
+Purpose
+-------
+
+This is a conceptual PowerShell demonstration for the OSWAP mathematical
+configuration idea.
+
+It demonstrates how a restricted arithmetic expression such as:
+
+    (9/3)
+
+can be evaluated once and then interpreted by different OSWAP subsystems.
+
+Example meanings:
+
+    Git context:
+        (9/3) -> 3 publication targets
+
+    Quantum context:
+        (9/3) -> dimension d = 3 -> qutrit
+
+Important:
+This does NOT perform quantum computation.
+It demonstrates a classical configuration layer that could later pass
+validated numeric values to a quantum SDK or simulator.
+
+
+------------------------------------------------------------
+POWERSHELL DEMONSTRATION
+------------------------------------------------------------
+
+# OSWAP Expression Demonstrator
+# Proof of concept only.
+#
+# Design goal:
+# Accept arithmetic, reject arbitrary PowerShell commands,
+# preserve the original expression, and return a numeric result.
+
+
+function Test-OswapArithmeticExpression {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Expression
+    )
+
+    # Extremely small demonstration grammar.
+    # Allows:
+    #   digits
+    #   decimal points
+    #   whitespace
+    #   +
+    #   -
+    #   *
+    #   /
+    #   %
+    #   parentheses
+    #
+    # A production implementation should use a proper parser/AST
+    # rather than relying only on a regular expression.
+
+    if ($Expression -notmatch '^[0-9\.\+\-\*\/%\(\)\s]+$') {
+        throw "Expression contains unsupported characters."
+    }
+
+    return $true
+}
+
+
+function Resolve-OswapExpression {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Expression
+    )
+
+    Test-OswapArithmeticExpression -Expression $Expression | Out-Null
+
+    # DEMONSTRATION ONLY:
+    #
+    # Invoke-Expression is used here only after a deliberately tiny
+    # character whitelist.
+    #
+    # A production OSWAP implementation should replace this with a
+    # dedicated arithmetic parser and must not evaluate arbitrary
+    # user-controlled PowerShell code.
+
+    $Result = Invoke-Expression $Expression
+
+    [pscustomobject]@{
+        Expression = $Expression
+        Result     = $Result
+    }
+}
+
+
+function Invoke-OswapGitDemo {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Expression
+    )
+
+    $Resolved = Resolve-OswapExpression -Expression $Expression
+
+    if ($Resolved.Result -lt 1) {
+        throw "Git target count must resolve to at least 1."
+    }
+
+    if ($Resolved.Result -ne [math]::Floor([double]$Resolved.Result)) {
+        throw "Git target count must resolve to a whole number."
+    }
+
+    $TargetCount = [int]$Resolved.Result
+
+    Write-Host ""
+    Write-Host "OSWAP Git allocation demonstration"
+    Write-Host "----------------------------------"
+    Write-Host "Original expression : $($Resolved.Expression)"
+    Write-Host "Resolved value      : $TargetCount"
+    Write-Host "Meaning             : Select $TargetCount publication target(s)"
+    Write-Host ""
+    Write-Host "No repository was modified."
+}
+
+
+function Invoke-OswapQuantumDigitDemo {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Expression
+    )
+
+    $Resolved = Resolve-OswapExpression -Expression $Expression
+
+    if ($Resolved.Result -lt 2) {
+        throw "Quantum digit dimension must be at least 2."
+    }
+
+    if ($Resolved.Result -ne [math]::Floor([double]$Resolved.Result)) {
+        throw "Quantum digit dimension must resolve to a whole number."
+    }
+
+    $Dimension = [int]$Resolved.Result
+
+    switch ($Dimension) {
+        2 { $QuantumDigitName = "qubit" }
+        3 { $QuantumDigitName = "qutrit" }
+        4 { $QuantumDigitName = "4-level qudit" }
+        default { $QuantumDigitName = "$Dimension-level qudit" }
+    }
+
+    Write-Host ""
+    Write-Host "OSWAP quantum-digit configuration demonstration"
+    Write-Host "------------------------------------------------"
+    Write-Host "Original expression : $($Resolved.Expression)"
+    Write-Host "Resolved dimension  : $Dimension"
+    Write-Host "Quantum digit type  : $QuantumDigitName"
+    Write-Host ""
+    Write-Host "Basis states:"
+
+    for ($i = 0; $i -lt $Dimension; $i++) {
+        Write-Host "  |$i>"
+    }
+
+    Write-Host ""
+    Write-Host "This is a classical configuration demonstration."
+    Write-Host "No quantum computation was performed."
+}
+
+
+------------------------------------------------------------
+EXAMPLE 1: ONE EXPRESSION, TWO MEANINGS
+------------------------------------------------------------
+
+$Expression = "(9/3)"
+
+Invoke-OswapGitDemo -Expression $Expression
+Invoke-OswapQuantumDigitDemo -Expression $Expression
+
+
+Expected conceptual output:
+
+    OSWAP Git allocation demonstration
+    ----------------------------------
+    Original expression : (9/3)
+    Resolved value      : 3
+    Meaning             : Select 3 publication target(s)
+
+    No repository was modified.
+
+    OSWAP quantum-digit configuration demonstration
+    ------------------------------------------------
+    Original expression : (9/3)
+    Resolved dimension  : 3
+    Quantum digit type  : qutrit
+
+    Basis states:
+      |0>
+      |1>
+      |2>
+
+    This is a classical configuration demonstration.
+    No quantum computation was performed.
+
+
+------------------------------------------------------------
+EXAMPLE 2: DIFFERENT EXPRESSIONS, SAME RESULT
+------------------------------------------------------------
+
+Resolve-OswapExpression "(9/3)"
+Resolve-OswapExpression "(1.5*2)"
+Resolve-OswapExpression "(1+2)"
+
+
+All three expressions resolve to:
+
+    3
+
+However, the original expression is preserved.
+
+This means OSWAP could retain both:
+
+    Expression: (9/3)
+    Result:     3
+
+instead of storing only:
+
+    Result:     3
+
+
+This may be useful for human-readable configuration provenance.
+
+
+------------------------------------------------------------
+CONCEPTUAL OSWAP ARCHITECTURE
+------------------------------------------------------------
+
+                    User expression
+
+                        (9/3)
+
+                           |
+                           v
+
+                 OSWAP expression parser
+
+                           |
+                           v
+
+                           3
+
+              +------------+------------+
+              |                         |
+              v                         v
+
+          Git adapter               Quantum adapter
+
+              |                         |
+              v                         v
+
+       3 publication targets        dimension d = 3
+
+                                        |
+                                        v
+
+                                      qutrit
+
+
+The arithmetic expression is classical.
+
+The surrounding subsystem determines what the resulting number means.
+
+
+------------------------------------------------------------
+FUTURE PRODUCTION DIRECTION
+------------------------------------------------------------
+
+A production implementation should:
+
+1. Replace Invoke-Expression with a dedicated arithmetic parser.
+
+2. Parse expressions into a restricted abstract syntax tree.
+
+3. Support only explicitly approved operators.
+
+4. Preserve:
+       - original expression
+       - normalized expression
+       - evaluated result
+       - result type
+
+5. Reject:
+       - commands
+       - variables unless explicitly supported
+       - property access
+       - method calls
+       - file operations
+       - network operations
+       - arbitrary PowerShell syntax
+
+6. Add domain adapters separately.
+
+Possible adapters:
+
+    OSWAP Git adapter
+        result -> repository allocation
+
+    OSWAP compute adapter
+        result -> worker count
+
+    OSWAP AI adapter
+        result -> resource parameter
+
+    OSWAP quantum adapter
+        result -> qudit dimension,
+                  shot count,
+                  iteration count,
+                  rotation parameter,
+                  or simulator configuration
+
+
+------------------------------------------------------------
+CORE IDEA
+------------------------------------------------------------
+
+OSWAP does not make PEMDAS "quantum."
+
+Instead:
+
+    mathematical expression
+              |
+              v
+       validated result
+              |
+              v
+       domain interpretation
+
+The same mathematical grammar can therefore describe values used by
+different computing systems while keeping the arithmetic layer simple,
+auditable, and human-readable.
