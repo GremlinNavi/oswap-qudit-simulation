@@ -1,0 +1,17 @@
+{
+  "project": "oswap-qudit-simulation",
+  "primary": {
+    "name": "github",
+    "url": "https://github.com/GremlinNavi/oswap-qudit-simulation.git"
+  },
+  "mirrors": [
+    {
+      "name": "gitlab",
+      "url": "https://gitlab.com/GremlinNavi-group/oswap-qudit-simulation.git"
+    }
+  ],
+  "policy": {
+    "force_push": false,
+    "preflight_required": true
+  }
+}
