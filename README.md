@@ -4,6 +4,16 @@ OSWAP Qudit Simulation is a classical PowerShell proof of concept for mapping re
 
 > Scientific scope: the current implementation does not simulate quantum state evolution and does not perform quantum computation. It resolves arithmetic expressions into deterministic values that can be interpreted as quantum-system configuration metadata, such as a qudit dimension.
 
+## Research thesis
+
+The current research thesis is:
+
+```text
+qudit=(PEMDAS)
+```
+
+A restricted human-readable arithmetic expression resolves deterministically to a typed dimension `d`, after which an independent domain adapter assigns meaning to that value. See [THESIS.md](THESIS.md) for the claim boundary, LLM research hypothesis, references, and falsifiable questions.
+
 ## What this project currently demonstrates
 
 The proof of concept implements a small semantic pipeline:
@@ -114,6 +124,8 @@ qudit=(9/3)  -> 3 -> interpret as d = 3
 twin=(9/3)   -> 3 -> interpret as 3 publication targets
 
 shots=(9/3)  -> 3 -> potentially interpret as 3 simulator shots
+
+qudit=(3*4)  -> 12 -> experimentally expose d = 12 to an LLM routing/configuration adapter
 ```
 
 The arithmetic layer can therefore remain deterministic while meaning is assigned by the receiving subsystem.
@@ -128,6 +140,7 @@ The present PowerShell implementation contains:
 - `Resolve-OswapExpression` — resolves the restricted arithmetic expression;
 - `Invoke-OswapGitDemo` — interprets the result as a repository publication-target count; and
 - `Invoke-OswapQuantumDigitDemo` — interprets the result as a qudit dimension and prints basis-state labels.
+- `Invoke-OswapLlmDimensionDemo` — interprets the result as a classical LLM routing/configuration dimension and prints logical state labels without performing inference or quantum computation.
 
 Example:
 
@@ -152,6 +165,8 @@ This is a classical configuration demonstration.
 No quantum computation was performed.
 ```
 
+An additional classical LLM-dimension example is available in `examples/llm-dimension-demo.ps1`.
+
 ## Safety boundary
 
 The demonstration accepts only a deliberately small arithmetic character set before evaluation.
@@ -170,8 +185,10 @@ The long-term objective should be a grammar that parses arithmetic directly rath
 
 ## Repository layout
 
+- `THESIS.md` — `qudit=(PEMDAS)` thesis, scientific boundary, and LLM research hypothesis.
 - `src/OSWAP-QuditSimulation.ps1` — current PowerShell proof-of-concept functions.
 - `examples/basic-demo.ps1` — minimal usage example.
+- `examples/llm-dimension-demo.ps1` — classical d-level LLM routing/configuration example.
 - `docs/OSWAP_PEMDAS_Quantum_Demo.txt` — preserved design/demo artifact.
 - `scripts/Push-OSWAPQuditBuild.ps1` — preflight-first helper for mirrored GitHub/GitLab publication.
 - `.oswap/mirrors.json` — intended mirror endpoints.
@@ -203,6 +220,7 @@ Near-term technical milestones for the quantum-related branch of this experiment
 5. define an explicit qudit-state data structure if actual state simulation is pursued;
 6. add normalized complex amplitudes and unitary operators before describing the software as a qudit-state simulator; and
 7. document classical complexity and memory scaling for any future multi-qudit implementation.
+8. benchmark whether typed d-level parameters provide measurable value in classical LLM routing, tool selection, or expert-selection experiments compared with plain numeric configuration.
 
 ## Claim boundary
 
